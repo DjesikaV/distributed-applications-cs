@@ -1,9 +1,7 @@
 package com.djesikav.motostock.entity;
 
 import jakarta.persistence.*;
-import org.hibernate.annotations.CreationTimestamp;
-
-import java.time.LocalDateTime;
+import com.djesikav.motostock.enums.Role;
 
 @Entity
 @Table(name = "users")
@@ -19,7 +17,7 @@ public class User extends BaseEntity{
     private String passwordHash;
 
     @Column(name = "role", nullable = false, length = 16)
-    private String role;
+    private Role role;
 
     @Column(name = "enabled", nullable = false)
     private boolean enabled;
@@ -48,11 +46,11 @@ public class User extends BaseEntity{
         this.passwordHash = passwordHash;
     }
 
-    public String getRole() {
+    public Role getRole() {
         return role;
     }
 
-    public void setRole(String role) {
+    public void setRole(Role role) {
         this.role = role;
     }
 
