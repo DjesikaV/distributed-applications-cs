@@ -7,12 +7,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "suppliers")
-public class Supplier {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Long id;
+public class Supplier extends BaseEntity{
 
     @Column(name = "name", nullable = false, length = 100)
     private String name;
@@ -25,14 +20,6 @@ public class Supplier {
 
     @Column(name = "active", nullable = false)
     private boolean active;
-
-    @CreationTimestamp
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
 
     public boolean isActive() {
         return active;
@@ -64,9 +51,5 @@ public class Supplier {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public Long getId() {
-        return id;
     }
 }

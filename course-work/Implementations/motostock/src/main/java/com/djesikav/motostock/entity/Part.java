@@ -9,11 +9,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "parts")
-public class Part {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Part extends BaseEntity {
 
     @Column(name = "sku", nullable = false, unique = true, length = 40)
     private String sku;
@@ -40,14 +36,6 @@ public class Part {
 
     @Column(name = "selling_price", nullable = false, precision = 10, scale = 2)
     private BigDecimal sellingPriceFormat;
-
-    @CreationTimestamp
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
 
     public BigDecimal getSellingPriceFormat() {
         return sellingPriceFormat;
@@ -111,9 +99,5 @@ public class Part {
 
     public void setSku(String sku) {
         this.sku = sku;
-    }
-
-    public Long getId() {
-        return id;
     }
 }

@@ -7,12 +7,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "users")
-public class User {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Long id;
+public class User extends BaseEntity{
 
     @Column(name = "username", nullable = false, length = 50, unique = true)
     private String username;
@@ -28,14 +23,6 @@ public class User {
 
     @Column(name = "enabled", nullable = false)
     private boolean enabled;
-
-    @CreationTimestamp
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
-
-    public Long getId() {
-        return id;
-    }
 
     public String getUsername() {
         return username;
@@ -75,9 +62,5 @@ public class User {
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
     }
 }
