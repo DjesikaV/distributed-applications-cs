@@ -45,11 +45,11 @@ public class Part extends BaseEntity {
         this.sellingPriceFormat = sellingPriceFormat;
     }
 
-    public BigDecimal getPriceFormat() {
+    public BigDecimal getPurchasePrice() {
         return priceFormat;
     }
 
-    public void setPriceFormat(BigDecimal priceFormat) {
+    public void setPurchasePrice(BigDecimal priceFormat) {
         this.priceFormat = priceFormat;
     }
 
