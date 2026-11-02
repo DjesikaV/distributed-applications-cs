@@ -1,5 +1,6 @@
 package com.djesikav.motostock.service;
 
+import com.djesikav.motostock.dto.form.CategoryForm;
 import com.djesikav.motostock.entity.Category;
 import com.djesikav.motostock.repository.CategoryRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -29,18 +30,25 @@ public class CategoryService {
     }
 
     @Transactional
-    public Category create(Category category) {
+    public Category create(CategoryForm form) {
+        Category category = new Category();
+
+        category.setName(form.getName());
+        category.setDescription(form.getDescription());
+        category.setDisplayOrder(form.getDisplayOrder());
+        category.setActive(form.getActive());
+
         return categoryRepository.save(category);
     }
 
     @Transactional
-    public Category update(Long id, Category category) {
+    public Category update(Long id, CategoryForm form) {
         Category categoryToUpdate = findById(id);
 
-        categoryToUpdate.setName(category.getName());
-        categoryToUpdate.setDescription(category.getDescription());
-        categoryToUpdate.setDisplayOrder(category.getDisplayOrder());
-        categoryToUpdate.setActive(category.getActive());
+        categoryToUpdate.setName(form.getName());
+        categoryToUpdate.setDescription(form.getDescription());
+        categoryToUpdate.setDisplayOrder(form.getDisplayOrder());
+        categoryToUpdate.setActive(form.getActive());
 
         return categoryRepository.save(categoryToUpdate);
     }
