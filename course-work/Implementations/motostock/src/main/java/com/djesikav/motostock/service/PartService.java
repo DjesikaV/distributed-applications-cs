@@ -1,5 +1,6 @@
 package com.djesikav.motostock.service;
 
+import com.djesikav.motostock.dto.form.PartForm;
 import com.djesikav.motostock.entity.Category;
 import com.djesikav.motostock.entity.Part;
 import com.djesikav.motostock.entity.Supplier;
@@ -9,6 +10,7 @@ import com.djesikav.motostock.repository.SupplierRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,7 +29,8 @@ public class PartService {
     }
 
     public Part findById(Long id) {
-        return partRepository.findById(id).orElse(null);
+        return partRepository.findById(id).orElseThrow(() ->
+                new EntityNotFoundException("Part not found with id: " + id));
     }
 
     public Page<Part> findAll(Pageable pageable) {
@@ -35,51 +38,67 @@ public class PartService {
     }
 
     @Transactional
-    public Part create(Part part, Long categoryId, Long supplierId) {
-        Category category =  categoryRepository.findById(categoryId)
-                .orElseThrow(() ->
-                        new EntityNotFoundException("Category not found with id: " + categoryId));
-        Supplier supplier =  supplierRepository.findById(supplierId)
-                .orElseThrow(() ->
-                        new EntityNotFoundException("Category not found with id: " + supplierId));
+    @PreAuthorize("hasRole('ADMIN')")
+    public Part create(PartForm form) {
 
-        if (part.getQuantity() < 0) {
-            throw new IllegalArgumentException("Quantity cannot be negative");
-        }
+        Part part = new Part();
 
-        if (part.getPurchasePrice() == null || part.getPurchasePrice().signum() < 0) {
-            throw new IllegalArgumentException("Purchase price cannot be negative");
-        }
-
-        if (part.getSellingPriceFormat() == null || part.getSellingPriceFormat().signum() < 0) {
-            throw new IllegalArgumentException("Selling price cannot be negative");
-        }
-
-        part.setCategory(category);
-        part.setSupplier(supplier);
+        applyForm(part, form);
 
         return partRepository.save(part);
     }
 
     @Transactional
-    public Part update(Long id, Part part) {
+    @PreAuthorize("hasRole('ADMIN')")
+    public Part update(Long id, PartForm form) {
         Part partToUpdate = findById(id);
 
-        partToUpdate.setName(part.getName());
-        partToUpdate.setCategory(part.getCategory());
-        partToUpdate.setBrand(part.getBrand());
-        partToUpdate.setQuantity(part.getQuantity());
-        partToUpdate.setSku(part.getSku());
-        partToUpdate.setPurchasePrice(part.getPurchasePrice());
-        partToUpdate.setSellingPriceFormat(part.getSellingPriceFormat());
-        partToUpdate.setSupplier(part.getSupplier());
+        applyForm(partToUpdate, form);
 
         return partRepository.save(partToUpdate);
     }
 
     @Transactional
+    @PreAuthorize("hasRole('ADMIN')")
     public void delete(Long id) {
         Part partToDelete = findById(id);
         partRepository.delete(partToDelete);
+    }
+
+    private void applyForm(Part part, PartForm form) {
+        if (form == null) {
+            throw new IllegalArgumentException("Part data is required.");
+        }
+
+        if (form.getCategoryId() == null || form.getSupplierId() == null) {
+            throw new IllegalArgumentException("Category and supplier data is required.");
+        }
+
+        Category category = categoryRepository.findById(form.getCategoryId())
+                .orElseThrow(() -> new EntityNotFoundException("Category not found with id: " + form.getCategoryId()));
+
+        Supplier supplier = supplierRepository.findById(form.getSupplierId())
+                .orElseThrow(() -> new EntityNotFoundException("Supplier not found with id: " + form.getSupplierId()));
+
+        if (form.getQuantity() == null || form.getQuantity() < 0) {
+            throw new IllegalArgumentException("Quantity cannot be negative or null.");
+        }
+
+        if (form.getPurchasePrice() == null || form.getPurchasePrice().signum() < 0) {
+            throw new IllegalArgumentException("Purchase price cannot be negative or null.");
+        }
+
+        if (form.getSellingPrice() == null || form.getSellingPrice().signum() < 0) {
+            throw new IllegalArgumentException("Selling price cannot be negative or null.");
+        }
+
+        part.setSku(form.getSku());
+        part.setName(form.getName());
+        part.setBrand(form.getBrand());
+        part.setCategory(category);
+        part.setSupplier(supplier);
+        part.setQuantity(form.getQuantity());
+        part.setPurchasePrice(form.getPurchasePrice());
+        part.setSellingPrice(form.getSellingPrice());
     }
 }

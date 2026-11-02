@@ -37,11 +37,11 @@ public class Part extends BaseEntity {
     @Column(name = "selling_price", nullable = false, precision = 10, scale = 2)
     private BigDecimal sellingPriceFormat;
 
-    public BigDecimal getSellingPriceFormat() {
+    public BigDecimal getSellingPrice() {
         return sellingPriceFormat;
     }
 
-    public void setSellingPriceFormat(BigDecimal sellingPriceFormat) {
+    public void setSellingPrice(BigDecimal sellingPriceFormat) {
         this.sellingPriceFormat = sellingPriceFormat;
     }
 
