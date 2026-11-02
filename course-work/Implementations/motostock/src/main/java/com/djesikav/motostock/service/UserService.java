@@ -1,5 +1,6 @@
 package com.djesikav.motostock.service;
 
+import com.djesikav.motostock.dto.form.*;
 import com.djesikav.motostock.entity.User;
 import com.djesikav.motostock.enums.Role;
 import com.djesikav.motostock.repository.UserRepository;
@@ -37,32 +38,51 @@ public class UserService {
     }
 
     @Transactional
-    public User register(User input, String rawPassword) {
-        return saveNewUser(input, rawPassword, Role.USER);
+    public User register(RegisterForm form) {
+        return saveNewUser(
+                form.getUsername(),
+                form.getEmail(),
+                form.getPassword(),
+                Role.USER
+        );
     }
 
     @Transactional
     @PreAuthorize("hasRole('ADMIN')")
-    public User createByAdmin(User input, String rawPassword, Role role) {
-        if (role == null) {
+    public User createByAdmin(AdminCreateUserForm form) {
+        if (form.getRole() == null) {
             throw new IllegalArgumentException("Role is required");
         }
 
-        return saveNewUser(input, rawPassword, role);
+        return saveNewUser(
+                form.getUsername(),
+                form.getEmail(),
+                form.getPassword(),
+                form.getRole()
+        );
     }
 
-    private User saveNewUser(User input, String rawPassword, Role role) {
-        if (input == null) {
-            throw new IllegalArgumentException("User data is required");
+    private User saveNewUser(String username, String email, String rawPassword, Role role) {
+        if (username == null || username.isBlank()) {
+            throw new IllegalArgumentException("Username is required");
         }
+
+        if (email == null || email.isBlank()) {
+            throw new IllegalArgumentException("Email is required");
+        }
+
         if (rawPassword == null || rawPassword.isBlank()) {
             throw new IllegalArgumentException("Password is required");
         }
 
+        if (role == null) {
+            throw new IllegalArgumentException("Role is required");
+        }
+
         User user = new User();
 
-        user.setUsername(input.getUsername());
-        user.setEmail(input.getEmail());
+        user.setUsername(username);
+        user.setEmail(email);
         user.setPasswordHash(passwordEncoder.encode(rawPassword));
         user.setRole(role);
         user.setEnabled(true);
@@ -85,18 +105,18 @@ public class UserService {
 
     @Transactional
     @PreAuthorize("hasRole('ADMIN')")
-    public User update(Long id, User updatedUser) {
+    public User update(Long id, UserUpdateForm form) {
         User user = findById(id);
 
-        user.setUsername(updatedUser.getUsername());
-        user.setEmail(updatedUser.getEmail());
+        user.setUsername(form.getUsername());
+        user.setEmail(form.getEmail());
 
         return userRepository.save(user);
     }
 
     @Transactional
     @PreAuthorize("isAuthenticated()")
-    public void changeOwnPassword(String currentPassword, String newPassword) {
+    public void changeOwnPassword(ChangePasswordForm form) {
         String username = SecurityContextHolder.getContext()
                 .getAuthentication()
                 .getName();
@@ -104,6 +124,9 @@ public class UserService {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() ->
                         new EntityNotFoundException("User not found"));
+
+        String currentPassword = form.getCurrentPassword();
+        String newPassword = form.getNewPassword();
 
         if (currentPassword == null || !passwordEncoder.matches(currentPassword, user.getPasswordHash())) {
             throw new IllegalArgumentException("Current password is incorrect");
@@ -130,7 +153,10 @@ public class UserService {
 
     @Transactional
     @PreAuthorize("hasRole('ADMIN')")
-    public void resetPasswordByAdmin(Long id, String newPassword) {
+    public void resetPasswordByAdmin(Long id, AdminResetPasswordForm form) {
+
+        String newPassword = form.getNewPassword();
+
         if (newPassword == null || newPassword.isBlank()) {
             throw new IllegalArgumentException("New password is required");
         }
