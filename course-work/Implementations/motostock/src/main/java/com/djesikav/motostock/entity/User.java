@@ -16,6 +16,7 @@ public class User extends BaseEntity{
     @Column(name = "password_hash", nullable = false, length = 255)
     private String passwordHash;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "role", nullable = false, length = 16)
     private Role role;
 
