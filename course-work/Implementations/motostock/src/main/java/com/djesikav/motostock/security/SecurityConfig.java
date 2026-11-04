@@ -29,10 +29,17 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/parts/new",
                                 "/parts/*/edit",
-                                "/categroies/new",
+                                "/categories/new",
                                 "/categories/*/edit",
                                 "/suppliers/new",
                                 "/suppliers/*/edit"
+                        ).hasRole("ADMIN")
+                        
+                        .requestMatchers(
+                                HttpMethod.POST,
+                                "/parts/**",
+                                "/categories/**",
+                                "/suppliers/**"
                         ).hasRole("ADMIN")
 
                         .requestMatchers(

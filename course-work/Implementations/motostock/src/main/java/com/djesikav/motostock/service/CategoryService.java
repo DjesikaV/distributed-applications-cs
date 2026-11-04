@@ -6,6 +6,7 @@ import com.djesikav.motostock.repository.CategoryRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +31,7 @@ public class CategoryService {
     }
 
     @Transactional
+    @PreAuthorize("hasRole('ADMIN')")
     public Category create(CategoryForm form) {
         Category category = new Category();
 
@@ -42,6 +44,7 @@ public class CategoryService {
     }
 
     @Transactional
+    @PreAuthorize("hasRole('ADMIN')")
     public Category update(Long id, CategoryForm form) {
         Category categoryToUpdate = findById(id);
 
@@ -54,6 +57,7 @@ public class CategoryService {
     }
 
     @Transactional
+    @PreAuthorize("hasRole('ADMIN')")
     public void delete(Long id) {
         Category categoryToDelete = findById(id);
         categoryRepository.delete(categoryToDelete);
