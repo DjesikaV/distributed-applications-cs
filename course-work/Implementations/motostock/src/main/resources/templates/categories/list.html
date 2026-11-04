@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Categories - MotoStock</title>
+</head>
+<body>
+<h1>Motorcycle Parts Categories</h1>
+
+<p th:if="${successMessage}"
+   th:text="${successMessage}"></p>
+
+<p th:if="${errorMessage}"
+   th:text="${errorMessage}"></p>
+
+<a sec:authorize="hasRole('ADMIN')"
+   th:href="@{/categories/new}">
+    Add Category
+</a>
+
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Description</th>
+        <th>Display order</th>
+        <th>Active</th>
+        <th sec:authorize="hasRole('ADMIN')">Actions</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <tr th:each="category : ${categories}">
+
+        <td th:text="${category.id}"></td>
+        <td th:text="${category.name}"></td>
+        <td th:text="${category.description}"></td>
+        <td th:text="${category.displayOrder}"></td>
+        <td th:text="${category.active}"></td>
+
+        <td sec:authorize="hasRole('ADMIN')">
+
+            <a th:href="@{/categories/{id}/edit(id=${category.id})}">
+                Edit
+            </a>
+
+            <form th:action="@{/categories/{id}/delete(id=${category.id})}"
+                  method="post"
+                  style="display:inline"
+                  onsubmit="return confirm('Are you sure you want to delete this category?');">
+
+                <button type="submit">Delete</button>
+            </form>
+
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<p th:if="${categories.isEmpty()}">
+    No categories found.
+</p>
+
+</body>
+</html>

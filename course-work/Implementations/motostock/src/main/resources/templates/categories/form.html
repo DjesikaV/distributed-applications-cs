@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Create Categories - MotoStock</title>
+</head>
+<body>
+<h1 th:text="${categoryId != null} ? 'Edit Category' : 'Create Category'">
+    Create Category
+</h1>
+
+<form th:action="${categoryId != null}
+        ? @{/categories/{id}(id=${categoryId})}
+        : @{/categories}"
+      th:object="${categoryForm}"
+      method="post">
+
+
+    <input type="hidden"
+           th:name="${_csrf.parameterName}"
+           th:value="${_csrf.token}">
+    <div>
+        <label>Name:</label>
+        <input type="text"
+               th:field="*{name}"
+               maxlength="80"
+               required>
+
+        <p th:if="${#fields.hasErrors('name')}"
+           th:errors="*{name}"></p>
+    </div>
+
+    <div>
+        <label>Description:</label>
+        <textarea th:field="*{description}"
+                  maxlength="255"></textarea>
+
+        <p th:if="${#fields.hasErrors('description')}"
+           th:errors="*{description}"></p>
+    </div>
+
+    <div>
+        <label>Display Order:</label>
+        <input type="number"
+               th:field="*{displayOrder}"
+               min="0"
+               required>
+
+        <p th:if="${#fields.hasErrors('displayOrder')}"
+           th:errors="*{displayOrder}"></p>
+    </div>
+
+    <div>
+        <label>Active:</label>
+        <select th:field="*{active}">
+            <option value="true">Yes</option>
+            <option value="false">No</option>
+        </select>
+
+        <p th:if="${#fields.hasErrors('name')}"
+           th:errors="*{name}"></p>
+
+    </div>
+
+    <button type="submit"
+            th:text="${categoryId != null} ? 'Save Changes' : 'Create Category'">
+        Create Category
+    </button></form>
+
+<a th:href="@{/categories}">Back to Categories</a>
+</body>
+</html>
