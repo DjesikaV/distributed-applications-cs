@@ -20,6 +20,97 @@
     Add Category
 </a>
 
+
+<div sec:authorize="isAuthenticated()">
+
+    <h3>Search Categories</h3>
+
+    <form th:action="@{/categories/search}" method="get">
+
+        <div>
+            <label for="name">Category Name:</label>
+            <input type="text"
+                   id="name"
+                   name="name"
+                   th:value="${name}"
+                   placeholder="Search by name..."
+                   maxlength="80">
+        </div>
+
+        <div>
+            <label for="active">Active Status:</label>
+            <select id="active" name="active">
+                <option value="all"
+                        th:selected="${active == null or active == 'all'}">
+                    All
+                </option>
+                <option value="true"
+                        th:selected="${active == 'true'}">
+                    Active
+                </option>
+                <option value="false"
+                        th:selected="${active == 'false'}">
+                    Inactive
+                </option>
+            </select>
+        </div>
+
+        <div>
+            <label for="sort">Sort By:</label>
+            <select id="sort" name="sort">
+                <option value="name"
+                        th:selected="${sort == null or sort == 'name'}">
+                    Name
+                </option>
+                <option value="displayOrder"
+                        th:selected="${sort == 'displayOrder'}">
+                    Display Order
+                </option>
+                <option value="active"
+                        th:selected="${sort == 'active'}">
+                    Active Status
+                </option>
+                <option value="createdAt"
+                        th:selected="${sort == 'createdAt'}">
+                    Creation Date
+                </option>
+            </select>
+        </div>
+
+        <div>
+            <label for="direction">Direction:</label>
+            <select id="direction" name="direction">
+                <option value="asc"
+                        th:selected="${direction == null or direction == 'asc'}">
+                    Ascending
+                </option>
+                <option value="desc"
+                        th:selected="${direction == 'desc'}">
+                    Descending
+                </option>
+            </select>
+        </div>
+
+        <div>
+            <label for="size">Records per page:</label>
+            <select id="size" name="size">
+                <option value="5" th:selected="${size == 5}">5</option>
+                <option value="10"
+                        th:selected="${size == null or size == 10}">10</option>
+                <option value="20" th:selected="${size == 20}">20</option>
+                <option value="50" th:selected="${size == 50}">50</option>
+            </select>
+        </div>
+
+        <input type="hidden" name="page" value="0">
+
+        <button type="submit">Search</button>
+        <a th:href="@{/categories/search}">Reset</a>
+
+    </form>
+
+</div>
+
 <table>
     <thead>
     <tr>
@@ -59,6 +150,43 @@
     </tr>
     </tbody>
 </table>
+
+
+<div sec:authorize="isAuthenticated()"
+     th:if="${categoryPage != null and categoryPage.totalPages > 0}">
+
+    <p>
+        Page
+        <span th:text="${categoryPage.number + 1}"></span>
+        of
+        <span th:text="${categoryPage.totalPages}"></span>
+    </p>
+
+    <a th:if="${categoryPage.hasPrevious()}"
+       th:href="@{/categories/search(
+           name=${name},
+           active=${active},
+           sort=${sort},
+           direction=${direction},
+           size=${size},
+           page=${categoryPage.number - 1}
+       )}">
+        Previous
+    </a>
+
+    <a th:if="${categoryPage.hasNext()}"
+       th:href="@{/categories/search(
+           name=${name},
+           active=${active},
+           sort=${sort},
+           direction=${direction},
+           size=${size},
+           page=${categoryPage.number + 1}
+       )}">
+        Next
+    </a>
+
+</div>
 
 <p th:if="${categories.isEmpty()}">
     No categories found.

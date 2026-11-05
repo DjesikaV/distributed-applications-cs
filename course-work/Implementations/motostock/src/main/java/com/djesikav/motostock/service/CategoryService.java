@@ -62,4 +62,11 @@ public class CategoryService {
         Category categoryToDelete = findById(id);
         categoryRepository.delete(categoryToDelete);
     }
+
+    @PreAuthorize("isAuthenticated()")
+    public Page<Category> search(String name, Boolean active, Pageable pageable) {
+        String searchName = name == null ? "" : name.trim();
+
+        return categoryRepository.search(searchName, active, pageable);
+    }
 }
