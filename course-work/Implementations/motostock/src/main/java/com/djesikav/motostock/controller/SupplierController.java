@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -40,7 +41,7 @@ public class SupplierController {
     @GetMapping("/new")
     @PreAuthorize("hasRole('ADMIN')")
     public String showCreateForm(Model model) {
-        model.addAttribute("supplier", new SupplierForm());
+        model.addAttribute("supplierForm", new SupplierForm());
 
         return "suppliers/form";
     }
@@ -70,8 +71,8 @@ public class SupplierController {
         form.setPriority(supplier.getPriority());
         form.setActive(supplier.isActive());
 
-        model.addAttribute("supplier", form);
-        model.addAttribute("supplierID", id);
+        model.addAttribute("supplierForm", form);
+        model.addAttribute("supplierId", id);
 
         return "suppliers/form";
     }
@@ -102,5 +103,44 @@ public class SupplierController {
         }
 
         return "redirect:/suppliers";
+    }
+
+    @GetMapping("/search")
+    @PreAuthorize("isAuthenticated()")
+    public String search(
+            @RequestParam(defaultValue = "") String name,
+            @RequestParam(defaultValue = "") String email,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "name") String sort,
+            @RequestParam(defaultValue = "asc") String direction,
+            Model model) {
+        String sortField = switch (sort) {
+            case "name", "priority", "createdAt" -> sort;
+            default -> "name";
+        };
+
+        Sort.Direction sortDirection =
+                direction.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
+
+        Pageable pageable = PageRequest.of(
+                Math.max(0, page),
+                Math.min(Math.max(1, size), 50),
+                Sort.by(sortDirection, sortField)
+        );
+
+        Page<Supplier> suppliers = supplierService.search(name, email, pageable);
+
+        model.addAttribute("suppliers", suppliers.getContent());
+        model.addAttribute("supplierPage", suppliers);
+
+        model.addAttribute("name", name);
+        model.addAttribute("email", email);
+        model.addAttribute("sort", sortField);
+        model.addAttribute("direction", sortDirection.name().toLowerCase());
+        model.addAttribute("size", pageable.getPageSize());
+
+        return "/suppliers/list";
+
     }
 }

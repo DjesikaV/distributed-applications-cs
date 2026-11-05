@@ -33,6 +33,7 @@ public class SupplierService {
     }
 
     @Transactional
+    @PreAuthorize("hasRole('ADMIN')")
     public Supplier create(SupplierForm form) {
 
         Supplier supplier = new Supplier();
@@ -46,6 +47,7 @@ public class SupplierService {
     }
 
     @Transactional
+    @PreAuthorize("hasRole('ADMIN')")
     public Supplier update(Long id, SupplierForm form) {
         Supplier supplierToUpdate = findById(id);
 
@@ -62,5 +64,17 @@ public class SupplierService {
     public void delete(Long id) {
         Supplier supplierToDelete = findById(id);
         supplierRepository.delete(supplierToDelete);
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    public Page<Supplier> search(String name, String email, Pageable pageable) {
+        String searchName = name == null ? "" : name.trim();
+        String searchEmail = email == null ? "" : email.trim();
+
+        if (searchName.isEmpty()) {
+            return supplierRepository.findByNameContainingIgnoreCase(searchName, pageable);
+        }
+
+        return supplierRepository.findByNameContainingIgnoreCaseAndEmailContainingIgnoreCase(searchName, searchEmail, pageable);
     }
 }
