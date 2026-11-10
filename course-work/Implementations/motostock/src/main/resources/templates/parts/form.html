@@ -1,0 +1,149 @@
+
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${partId != null} ? 'Edit Part - MotoStock' : 'Create Part - MotoStock'">
+        Part - MotoStock
+    </title>
+</head>
+
+<body>
+
+<h1 th:text="${partId != null} ? 'Edit Motorcycle Part' : 'Create Motorcycle Part'">
+    Create Motorcycle Part
+</h1>
+<form th:action="@{${partId != null ? '/parts/' + partId : '/parts'}}"
+      th:object="${partForm}"
+      method="post">
+
+    <input type="hidden"
+           th:name="${_csrf.parameterName}"
+           th:value="${_csrf.token}">
+
+    <div>
+        <label for="sku">SKU:</label>
+        <input type="text"
+               id="sku"
+               th:field="*{sku}"
+               maxlength="40"
+               required>
+
+        <p th:if="${#fields.hasErrors('sku')}"
+           th:errors="*{sku}"></p>
+    </div>
+
+    <div>
+        <label for="name">Part Name:</label>
+        <input type="text"
+               id="name"
+               th:field="*{name}"
+               maxlength="120"
+               required>
+
+        <p th:if="${#fields.hasErrors('name')}"
+           th:errors="*{name}"></p>
+    </div>
+
+    <div>
+        <label for="brand">Brand:</label>
+        <input type="text"
+               id="brand"
+               th:field="*{brand}"
+               maxlength="80">
+
+        <p th:if="${#fields.hasErrors('brand')}"
+           th:errors="*{brand}"></p>
+    </div>
+
+    <div>
+        <label for="categoryId">Category:</label>
+
+        <select id="categoryId"
+                th:field="*{categoryId}"
+                required>
+
+            <option value="">Select Category</option>
+
+            <option th:each="category : ${categories}"
+                    th:value="${category.id}"
+                    th:text="${category.name}">
+            </option>
+
+        </select>
+
+        <p th:if="${#fields.hasErrors('categoryId')}"
+           th:errors="*{categoryId}"></p>
+    </div>
+
+    <div>
+        <label for="supplierId">Supplier:</label>
+
+        <select id="supplierId"
+                th:field="*{supplierId}"
+                required>
+
+            <option value="">Select Supplier</option>
+
+            <option th:each="supplier : ${suppliers}"
+                    th:value="${supplier.id}"
+                    th:text="${supplier.name}">
+            </option>
+
+        </select>
+
+        <p th:if="${#fields.hasErrors('supplierId')}"
+           th:errors="*{supplierId}"></p>
+    </div>
+
+    <div>
+        <label for="quantity">Quantity:</label>
+        <input type="number"
+               id="quantity"
+               th:field="*{quantity}"
+               min="0"
+               step="1"
+               required>
+
+        <p th:if="${#fields.hasErrors('quantity')}"
+           th:errors="*{quantity}"></p>
+    </div>
+
+    <div>
+        <label for="purchasePrice">Purchase Price:</label>
+        <input type="number"
+               id="purchasePrice"
+               th:field="*{purchasePrice}"
+               min="0"
+               step="0.01"
+               required>
+
+        <p th:if="${#fields.hasErrors('purchasePrice')}"
+           th:errors="*{purchasePrice}"></p>
+    </div>
+
+    <div>
+        <label for="sellingPrice">Selling Price:</label>
+        <input type="number"
+               id="sellingPrice"
+               th:field="*{sellingPrice}"
+               min="0"
+               step="0.01"
+               required>
+
+        <p th:if="${#fields.hasErrors('sellingPrice')}"
+           th:errors="*{sellingPrice}"></p>
+    </div>
+
+    <button type="submit"
+            th:text="${partId != null} ? 'Save Changes' : 'Create Part'">
+        Create Part
+    </button>
+</form>
+
+<a th:href="@{/parts}">Back to Parts</a>
+
+</body>
+</html>

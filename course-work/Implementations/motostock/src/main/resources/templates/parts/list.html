@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Parts - MotoStock</title>
+</head>
+
+<body>
+
+<h1>Motorcycle Parts Inventory</h1>
+
+<a sec:authorize="hasRole('ADMIN')"
+   th:href="@{/parts/new}">
+    Add Part
+</a>
+
+<p th:if="${successMessage}"
+   th:text="${successMessage}"></p>
+
+<p th:if="${errorMessage}"
+   th:text="${errorMessage}"></p>
+
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>SKU</th>
+        <th>Name</th>
+        <th>Brand</th>
+        <th>Category</th>
+        <th>Supplier</th>
+        <th>Quantity</th>
+        <th>Purchase Price</th>
+        <th>Selling Price</th>
+        <th sec:authorize="hasRole('ADMIN')">Actions</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <tr th:each="part : ${parts}">
+
+        <td th:text="${part.id}"></td>
+
+        <td th:text="${part.sku}"></td>
+
+        <td th:text="${part.name}"></td>
+
+        <td th:text="${part.brand}"></td>
+
+        <td th:text="${part.category.name}"></td>
+
+        <td th:text="${part.supplier.name}"></td>
+
+        <td th:text="${part.quantity}"></td>
+
+        <td th:text="${part.purchasePrice}"></td>
+
+        <td th:text="${part.sellingPrice}"></td>
+
+        <td sec:authorize="hasRole('ADMIN')">
+
+            <a th:href="@{/parts/{id}/edit(id=${part.id})}">
+                Edit
+            </a>
+
+            <form th:action="@{/parts/{id}/delete(id=${part.id})}"
+                  method="post"
+                  style="display:inline"
+                  onsubmit="return confirm('Are you sure you want to delete this part?');">
+
+                <input type="hidden"
+                       th:name="${_csrf.parameterName}"
+                       th:value="${_csrf.token}">
+
+                <button type="submit">Delete</button>
+
+            </form>
+
+        </td>
+
+    </tr>
+    </tbody>
+</table>
+
+<p th:if="${parts.isEmpty()}">
+    No motorcycle parts found.
+</p>
+
+<a th:href="@{/}">Back to Home</a>
+
+</body>
+</html>
