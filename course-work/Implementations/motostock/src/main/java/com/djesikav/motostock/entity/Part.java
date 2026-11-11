@@ -32,25 +32,25 @@ public class Part extends BaseEntity {
     private int quantity;
 
     @Column(name = "purchase_price", nullable = false, precision = 10, scale = 2)
-    private BigDecimal priceFormat;
+    private BigDecimal purchasePrice;
 
     @Column(name = "selling_price", nullable = false, precision = 10, scale = 2)
-    private BigDecimal sellingPriceFormat;
+    private BigDecimal sellingPrice;
 
     public BigDecimal getSellingPrice() {
-        return sellingPriceFormat;
+        return sellingPrice;
     }
 
     public void setSellingPrice(BigDecimal sellingPriceFormat) {
-        this.sellingPriceFormat = sellingPriceFormat;
+        this.sellingPrice = sellingPriceFormat;
     }
 
     public BigDecimal getPurchasePrice() {
-        return priceFormat;
+        return purchasePrice;
     }
 
     public void setPurchasePrice(BigDecimal priceFormat) {
-        this.priceFormat = priceFormat;
+        this.purchasePrice = priceFormat;
     }
 
     public int getQuantity() {

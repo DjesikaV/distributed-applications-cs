@@ -67,14 +67,26 @@ public class SupplierService {
     }
 
     @PreAuthorize("isAuthenticated()")
-    public Page<Supplier> search(String name, String email, Pageable pageable) {
+    public Page<Supplier> search(
+            String name,
+            String email,
+            Pageable pageable) {
+
         String searchName = name == null ? "" : name.trim();
         String searchEmail = email == null ? "" : email.trim();
 
-        if (searchName.isEmpty()) {
-            return supplierRepository.findByNameContainingIgnoreCase(searchName, pageable);
+        if (searchEmail.isEmpty()) {
+            return supplierRepository.findByNameContainingIgnoreCase(
+                    searchName,
+                    pageable
+            );
         }
 
-        return supplierRepository.findByNameContainingIgnoreCaseAndEmailContainingIgnoreCase(searchName, searchEmail, pageable);
+        return supplierRepository
+                .findByNameContainingIgnoreCaseAndEmailContainingIgnoreCase(
+                        searchName,
+                        searchEmail,
+                        pageable
+                );
     }
 }

@@ -81,7 +81,7 @@ public class SupplierController {
     @PreAuthorize("hasRole('ADMIN')")
     public String update(@PathVariable Long id, @Valid @ModelAttribute("supplierForm") SupplierForm form, BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
-            model.addAttribute("supplier", id);
+            model.addAttribute("supplierId", id);
             return "suppliers/form";
         }
 

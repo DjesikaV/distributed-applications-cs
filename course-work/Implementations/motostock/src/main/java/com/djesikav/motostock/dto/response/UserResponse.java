@@ -20,7 +20,7 @@ public record UserResponse (
                 user.getEmail(),
                 user.getRole(),
                 user.isEnabled(),
-                user.getCreateAt()
+                user.getCreatedAt()
         );
     }
 }
