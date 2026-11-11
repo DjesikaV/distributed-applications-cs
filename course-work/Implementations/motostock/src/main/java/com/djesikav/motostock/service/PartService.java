@@ -101,4 +101,12 @@ public class PartService {
         part.setPurchasePrice(form.getPurchasePrice());
         part.setSellingPrice(form.getSellingPrice());
     }
+
+    @PreAuthorize("isAuthenticated()")
+    public Page<Part> search(String name, String sku, Pageable pageable) {
+        String searchName = name == null ? "" : name.trim();
+        String searchSku = sku == null ? "" : sku.trim();
+
+        return partRepository.findByNameContainingIgnoreCaseAndSkuContainingIgnoreCase(searchName, searchSku, pageable);
+    }
 }

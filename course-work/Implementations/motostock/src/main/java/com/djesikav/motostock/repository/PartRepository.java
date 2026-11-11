@@ -11,4 +11,7 @@ public interface PartRepository extends JpaRepository<Part, Long> {
     @Override
     @EntityGraph(attributePaths = {"category", "supplier"})
     Page<Part> findAll(Pageable pageable);
+
+    @EntityGraph(attributePaths = {"category", "supplier"})
+    Page<Part> findByNameContainingIgnoreCaseAndSkuContainingIgnoreCase(String name, String sku, Pageable pageable);
 }
