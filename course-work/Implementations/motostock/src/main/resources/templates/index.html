@@ -1,5 +1,7 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <title>MotoStock</title>
@@ -7,6 +9,22 @@
 <body>
     <h1>Welcome to MotoStock</h1>
 
+    <div sec:authorize="isAnonymous()">
+        <a th:href="@{/login}">Login</a>
+        <a th:href="@{/register}">Register</a>
+    </div>
+
+    <div sec:authorize="isAuthenticated()">
+        <form th:action="@{/logout}" method="post">
+            <button type="submit">Logout</button>
+        </form>
+    </div>
+
+    <p>
+        <a th:href="@{/parts}">Parts</a>
+        <a th:href="@{/categories}">Categories</a>
+        <a th:href="@{/suppliers}">Suppliers</a>
+    </p>
     <p>
         Current user:
         <strong th:text="${username}">Guest</strong>
