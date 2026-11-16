@@ -142,4 +142,48 @@ public class PartController {
                         Pageable.unpaged(Sort.by("name"))
                 ).getContent());
     }
+
+
+    @GetMapping("/search")
+    @PreAuthorize("isAuthenticated()")
+    public String search(
+            @RequestParam(defaultValue = "") String name,
+            @RequestParam(defaultValue = "") String sku,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "name") String sort,
+            @RequestParam(defaultValue = "asc") String direction,
+            Model model) {
+
+        String sortField = switch (sort) {
+            case "name", "sku", "brand", "quantity",
+                 "purchasePrice", "sellingPrice", "createdAt" -> sort;
+            default -> "name";
+        };
+
+        Sort.Direction sortDirection =
+                direction.equalsIgnoreCase("desc")
+                        ? Sort.Direction.DESC
+                        : Sort.Direction.ASC;
+
+        Pageable pageable = PageRequest.of(
+                Math.max(0, page),
+                Math.min(Math.max(1, size), 50),
+                Sort.by(sortDirection, sortField)
+        );
+
+        Page<Part> parts = partService.search(name, sku, pageable);
+
+        model.addAttribute("parts", parts.getContent());
+        model.addAttribute("partPage", parts);
+
+        model.addAttribute("name", name);
+        model.addAttribute("sku", sku);
+        model.addAttribute("sort", sortField);
+        model.addAttribute("direction", sortDirection.name().toLowerCase());
+        model.addAttribute("size", pageable.getPageSize());
+
+        return "parts/list";
+    }
+
 }
