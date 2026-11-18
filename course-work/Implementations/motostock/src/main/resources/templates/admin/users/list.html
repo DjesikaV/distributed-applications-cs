@@ -1,0 +1,82 @@
+
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>User Management - MotoStock</title>
+</head>
+
+<body>
+
+<h1>User Management</h1>
+
+<h3>Registered Users</h3>
+
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Username</th>
+        <th>Email</th>
+        <th>Role</th>
+        <th>Enabled</th>
+        <th>Created At</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <tr th:each="user : ${users}">
+
+        <td th:text="${user.id()}"></td>
+
+        <td th:text="${user.username()}"></td>
+
+        <td th:text="${user.email()}"></td>
+
+        <td th:text="${user.role()}"></td>
+
+        <td th:text="${user.enabled() ? 'Yes' : 'No'}"></td>
+
+        <td th:text="${user.createdAt()}"></td>
+
+    </tr>
+    </tbody>
+</table>
+
+<p th:if="${users.isEmpty()}">
+    No registered users found.
+</p>
+
+<div th:if="${userPage.totalPages > 0}">
+
+    <p>
+        Page
+        <span th:text="${userPage.number + 1}"></span>
+        of
+        <span th:text="${userPage.totalPages}"></span>
+    </p>
+
+    <a th:if="${userPage.hasPrevious()}"
+       th:href="@{/admin/users(
+           page=${userPage.number - 1},
+           size=${userPage.size}
+       )}">
+        Previous
+    </a>
+
+    <a th:if="${userPage.hasNext()}"
+       th:href="@{/admin/users(
+           page=${userPage.number + 1},
+           size=${userPage.size}
+       )}">
+        Next
+    </a>
+
+</div>
+
+<a th:href="@{/}">Back to Home</a>
+
+</body>
+</html>

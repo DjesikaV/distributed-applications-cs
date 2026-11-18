@@ -25,6 +25,13 @@
         <a th:href="@{/categories}">Categories</a>
         <a th:href="@{/suppliers}">Suppliers</a>
     </p>
+
+    <div sec:authorize="hasRole('ADMIN')">
+        <a th:href="@{/admin/users}">
+            Manage Users
+        </a>
+    </div>
+
     <p>
         Current user:
         <strong th:text="${username}">Guest</strong>
