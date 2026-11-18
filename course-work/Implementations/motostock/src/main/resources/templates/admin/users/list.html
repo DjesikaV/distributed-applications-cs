@@ -12,6 +12,13 @@
 
 <h1>User Management</h1>
 
+<p th:if="${successMessage != null}"
+   th:text="${successMessage}"></p>
+
+<p>
+    <a th:href="@{/admin/users/new}">Create user</a>
+</p>
+
 <h3>Registered Users</h3>
 
 <table>
