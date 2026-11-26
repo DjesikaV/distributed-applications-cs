@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Delete user - MotoStock</title>
+</head>
+<body>
+
+<h1>Delete user</h1>
+
+<p>
+    Permanently delete the account
+    <strong th:text="${target.username()}"></strong>
+    (<span th:text="${target.email()}"></span>)?
+    This cannot be undone.
+</p>
+
+<form th:action="@{/admin/users/{id}/delete(id=${target.id()})}" method="post">
+    <input type="hidden" name="size" th:value="${size}">
+    <button type="submit">Delete account</button>
+</form>
+
+<p>
+    <a th:href="@{/admin/users(page=${page},size=${size})}">Cancel</a>
+</p>
+
+</body>
+</html>

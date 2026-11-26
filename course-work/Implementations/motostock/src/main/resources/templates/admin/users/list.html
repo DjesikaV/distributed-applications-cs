@@ -51,6 +51,14 @@
             page=${userPage.number},
             size=${userPage.size}
     )}">Edit</a>
+
+            <a th:if="${user.id() != #authentication.principal.userId}"
+               th:href="@{/admin/users/{id}/delete(
+                   id=${user.id()},
+                   page=${userPage.number},
+                   size=${userPage.size}
+               )}">Delete</a>
+
         </td>
 
         <td th:text="${user.email()}"></td>

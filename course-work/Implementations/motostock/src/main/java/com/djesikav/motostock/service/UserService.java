@@ -149,8 +149,8 @@ public class UserService {
     @Transactional
     @PreAuthorize("hasRole('ADMIN')")
     public void delete(Long id) {
-        User user = findById(id);
-        userRepository.delete(user);
+        User target = lockTargetForAdminChange(id, true);
+        userRepository.delete(target);
     }
 
     @Transactional

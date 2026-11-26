@@ -20,6 +20,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.nio.charset.StandardCharsets;
 import jakarta.persistence.EntityNotFoundException;
 import com.djesikav.motostock.dto.form.UserUpdateForm;
+import com.djesikav.motostock.security.MotoStockPrincipal;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
 @Controller
 @RequestMapping("/admin/users")
@@ -209,6 +211,42 @@ public class AdminUserController {
         redirect.addAttribute("page", page);
         redirect.addAttribute("size", size);
 
+        return "redirect:/admin/users";
+    }
+
+    @GetMapping("/{id}/delete")
+    public String showDeleteConfirmation(
+            @PathVariable Long id,
+            @AuthenticationPrincipal MotoStockPrincipal principal,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            Model model,
+            RedirectAttributes redirect) {
+
+        if (id.equals(principal.getUserId())) {
+            redirect.addFlashAttribute("errorMessage", "You cannot delete your own admin account.");
+            redirect.addAttribute("page", page);
+            redirect.addAttribute("size", size);
+            return "redirect:/admin/users";
+        }
+
+        model.addAttribute("target", UserResponse.fromEntity(userService.findById(id)));
+        model.addAttribute("page", page);
+        model.addAttribute("size", size);
+
+        return "admin/users/delete";
+    }
+
+    @PostMapping("/{id}/delete")
+    public String deleteUser(
+            @PathVariable Long id,
+            @RequestParam(defaultValue = "10") int size,
+            RedirectAttributes redirect) {
+
+        userService.delete(id);
+
+        redirect.addFlashAttribute("successMessage", "User account deleted.");
+        redirect.addAttribute("size", size);
         return "redirect:/admin/users";
     }
 
