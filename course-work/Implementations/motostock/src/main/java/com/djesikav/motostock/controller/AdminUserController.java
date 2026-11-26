@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.nio.charset.StandardCharsets;
+import jakarta.persistence.EntityNotFoundException;
 
 @Controller
 @RequestMapping("/admin/users")
@@ -101,6 +102,34 @@ public class AdminUserController {
                 "successMessage",
                 "User created successfully."
         );
+
+        return "redirect:/admin/users";
+    }
+
+    @PostMapping("/{id}/role")
+    public String changeRole(
+            @PathVariable Long id,
+            @RequestParam Role role,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            RedirectAttributes redirectAttributes) {
+
+        try {
+            var user = userService.changeRole(id, role);
+
+            redirectAttributes.addFlashAttribute(
+                    "successMessage",
+                    user.getUsername() + " now has the " + user.getRole() + " role."
+            );
+        } catch (EntityNotFoundException ex) {
+            redirectAttributes.addFlashAttribute(
+                    "errorMessage",
+                    "This account no longer exists."
+            );
+        }
+
+        redirectAttributes.addAttribute("page", page);
+        redirectAttributes.addAttribute("size", size);
 
         return "redirect:/admin/users";
     }

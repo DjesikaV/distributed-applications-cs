@@ -15,6 +15,10 @@
 <p th:if="${successMessage != null}"
    th:text="${successMessage}"></p>
 
+<p th:if="${errorMessage != null}"
+   th:text="${errorMessage}"
+   role="alert"></p>
+
 <p>
     <a th:href="@{/admin/users/new}">Create user</a>
 </p>
@@ -30,6 +34,7 @@
         <th>Role</th>
         <th>Enabled</th>
         <th>Created At</th>
+        <th>Change role</th>
     </tr>
     </thead>
 
@@ -47,6 +52,32 @@
         <td th:text="${user.enabled() ? 'Yes' : 'No'}"></td>
 
         <td th:text="${user.createdAt()}"></td>
+
+        <td>
+    <span th:if="${user.username() == #authentication.name}">
+        Your account
+    </span>
+
+            <form th:unless="${user.username() == #authentication.name}"
+                  th:action="@{/admin/users/{id}/role(id=${user.id()})}"
+                  method="post">
+
+                <input type="hidden" name="page" th:value="${userPage.number}">
+                <input type="hidden" name="size" th:value="${userPage.size}">
+
+                <select name="role"
+                        th:attr="aria-label=|Role for ${user.username()}|"
+                        required>
+                    <option th:each="role : ${roles}"
+                            th:value="${role.name()}"
+                            th:text="${role.name()}"
+                            th:selected="${role == user.role()}">
+                    </option>
+                </select>
+
+                <button type="submit">Save role</button>
+            </form>
+        </td>
 
     </tr>
     </tbody>

@@ -12,6 +12,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
+import org.springframework.security.access.AccessDeniedException;
 
 @Service
 @Transactional(readOnly = true)
@@ -86,19 +87,6 @@ public class UserService {
         user.setPasswordHash(passwordEncoder.encode(rawPassword));
         user.setRole(role);
         user.setEnabled(true);
-
-        return userRepository.save(user);
-    }
-
-    @Transactional
-    @PreAuthorize("hasRole('ADMIN')")
-    public User changeRole(Long id, Role role) {
-        if (role == null) {
-            throw new IllegalArgumentException("Role is required");
-        }
-
-        User user = findById(id);
-        user.setRole(role);
 
         return userRepository.save(user);
     }
@@ -195,5 +183,38 @@ public class UserService {
         }
 
         userRepository.delete(user);
+    }
+
+    @Transactional
+    @PreAuthorize("hasRole('ADMIN')")
+    public User changeRole(Long id, Role role){
+        if (role == null) {
+            throw new IllegalArgumentException("Role is required");
+        }
+        String actorName =  SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getName();
+        var accounts = userRepository.findFOrRoleChange(actorName, id);
+
+        User actor = accounts.stream()
+                .filter(account -> account.getUsername().equals(actorName))
+                .findFirst()
+                .orElseThrow(() -> new AccessDeniedException("Administrator required."));
+
+        if (!actor.isEnabled() || actor.getRole() != Role.ADMIN) {
+            throw new AccessDeniedException("Administrator required.");
+        }
+
+        User target = accounts.stream()
+                .filter(account -> account.getId().equals(id))
+                .findFirst()
+                .orElseThrow(() -> new EntityNotFoundException("User no longer exists."));
+
+        if (actor.getId().equals(id) && role != Role.ADMIN) {
+            throw new AccessDeniedException("You cannot demote your own account.");
+        }
+
+        target.setRole(role);
+        return target;
     }
 }
