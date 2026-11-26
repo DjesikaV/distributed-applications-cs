@@ -18,15 +18,11 @@ public class CustomerUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username)
-        throws UsernameNotFoundException {
-            User user = userRepository.findByUsername(username)
-                    .orElseThrow(() -> new UsernameNotFoundException("User not found."));
+            throws UsernameNotFoundException {
 
-            return org.springframework.security.core.userdetails.User
-                    .withUsername(user.getUsername())
-                    .password(user.getPasswordHash())
-                    .roles(user.getRole().name())
-                    .disabled(!user.isEnabled())
-                    .build();
-        }
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found."));
+
+        return new MotoStockPrincipal(user);
+    }
 }

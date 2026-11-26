@@ -16,11 +16,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("""
             select u from User u
-            where u.username = :actor or u.id = :target
+            where u.id = :actor or u.id = :target
             order by u.id
             """)
     List<User> findForAdminChange(
-            @Param("actor") String actor,
+            @Param("actor") Long actor,
             @Param("target") Long target
     );
 }

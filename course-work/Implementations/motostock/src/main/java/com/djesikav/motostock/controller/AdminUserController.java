@@ -19,6 +19,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.nio.charset.StandardCharsets;
 import jakarta.persistence.EntityNotFoundException;
+import com.djesikav.motostock.dto.form.UserUpdateForm;
 
 @Controller
 @RequestMapping("/admin/users")
@@ -160,6 +161,68 @@ public class AdminUserController {
         redirectAttributes.addAttribute("page", page);
         redirectAttributes.addAttribute("size", size);
 
+        return "redirect:/admin/users";
+    }
+
+    @GetMapping("/{id}/edit")
+    public String showEditForm(
+            @PathVariable Long id,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            Model model) {
+
+        var user = userService.findById(id);
+
+        var form = new UserUpdateForm();
+        form.setUsername(user.getUsername());
+        form.setEmail(user.getEmail());
+
+        model.addAttribute("editForm", form);
+        return editView(id, page, size, model);
+    }
+
+    @PostMapping("/{id}/edit")
+    public String update(
+            @PathVariable Long id,
+            @Valid @ModelAttribute("editForm") UserUpdateForm form,
+            BindingResult errors,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            Model model,
+            RedirectAttributes redirect) {
+
+        if (errors.hasErrors()) {
+            return editView(id, page, size, model);
+        }
+
+        try {
+            userService.update(id, form);
+        } catch (DataIntegrityViolationException ex) {
+            errors.reject(
+                    "user.update.failed",
+                    "Could not save. The username or email may already be in use."
+            );
+            return editView(id, page, size, model);
+        }
+
+        redirect.addFlashAttribute("successMessage", "Account details updated.");
+        redirect.addAttribute("page", page);
+        redirect.addAttribute("size", size);
+
+        return "redirect:/admin/users";
+    }
+
+    private String editView(Long id, int page, int size, Model model) {
+        model.addAttribute("userId", id);
+        model.addAttribute("page", page);
+        model.addAttribute("size", size);
+
+        return "admin/users/edit";
+    }
+
+    @ExceptionHandler(EntityNotFoundException.class)
+    public String userNoLongerExists(RedirectAttributes redirect) {
+        redirect.addFlashAttribute("errorMessage", "This account no longer exists.");
         return "redirect:/admin/users";
     }
 }

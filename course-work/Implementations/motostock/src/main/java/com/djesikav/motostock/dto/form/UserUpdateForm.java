@@ -11,7 +11,7 @@ public class UserUpdateForm {
     private String username;
     @NotBlank(message = "Email is required.")
     @Email(message = "Invalid email")
-    @Size(max = 120, message = "Email cannot exceed 12 characters.")
+    @Size(max = 120, message = "Email cannot exceed 120 characters.")
     private String email;
 
     public String getUsername() {

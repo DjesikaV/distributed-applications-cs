@@ -13,6 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 import org.springframework.security.access.AccessDeniedException;
+import com.djesikav.motostock.security.MotoStockPrincipal;
 
 @Service
 @Transactional(readOnly = true)
@@ -94,12 +95,12 @@ public class UserService {
     @Transactional
     @PreAuthorize("hasRole('ADMIN')")
     public User update(Long id, UserUpdateForm form) {
-        User user = findById(id);
+        User user = lockTargetForAdminChange(id, false);
 
         user.setUsername(form.getUsername());
         user.setEmail(form.getEmail());
 
-        return userRepository.save(user);
+        return userRepository.saveAndFlush(user);
     }
 
     @Transactional
@@ -109,9 +110,8 @@ public class UserService {
                 .getAuthentication()
                 .getName();
 
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() ->
-                        new EntityNotFoundException("User not found"));
+        User user = userRepository.findById(signedInUserId())
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
         String currentPassword = form.getCurrentPassword();
         String newPassword = form.getNewPassword();
@@ -160,9 +160,8 @@ public class UserService {
                 .getAuthentication()
                 .getName();
 
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() ->
-                        new EntityNotFoundException("User not found"));
+        User user = userRepository.findById(signedInUserId())
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
         if (currentPassword == null || !passwordEncoder.matches(currentPassword, user.getPasswordHash())) {
             throw new IllegalArgumentException("Incorrect password");
@@ -196,14 +195,11 @@ public class UserService {
     }
 
     private User lockTargetForAdminChange(Long id, boolean removesAccess) {
-        String actorName = SecurityContextHolder.getContext()
-                .getAuthentication()
-                .getName();
-
-        var accounts = userRepository.findForAdminChange(actorName, id);
+        Long actorId = signedInUserId();
+        var accounts = userRepository.findForAdminChange(actorId, id);
 
         User actor = accounts.stream()
-                .filter(account -> account.getUsername().equals(actorName))
+                .filter(account -> account.getId().equals(actorId))
                 .filter(account -> account.isEnabled() && account.getRole() == Role.ADMIN)
                 .findFirst()
                 .orElseThrow(() -> new AccessDeniedException("Administrator required."));
@@ -216,5 +212,15 @@ public class UserService {
                 .filter(account -> account.getId().equals(id))
                 .findFirst()
                 .orElseThrow(() -> new EntityNotFoundException("User no longer exists."));
+    }
+
+    private Long signedInUserId() {
+        var auth = SecurityContextHolder.getContext().getAuthentication();
+
+        if (auth != null && auth.getPrincipal() instanceof MotoStockPrincipal principal) {
+            return principal.getUserId();
+        }
+
+        throw new AccessDeniedException("Please sign in again.");
     }
 }

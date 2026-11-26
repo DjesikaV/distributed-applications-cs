@@ -31,8 +31,10 @@ final class CurrentRoleFilter extends OncePerRequestFilter {
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
-        if (auth != null && auth.getPrincipal() instanceof UserDetails principal) {
-            boolean current = users.findByUsername(principal.getUsername())
+        if (auth != null && auth.getPrincipal() instanceof UserDetails) {
+            boolean current = auth.getPrincipal() instanceof MotoStockPrincipal principal
+                    && users.findById(principal.getUserId())
+                    .filter(user -> user.getUsername().equals(principal.getUsername()))
                     .filter(user -> user.isEnabled() && auth.getAuthorities().contains(
                             new SimpleGrantedAuthority("ROLE_" + user.getRole().name())))
                     .isPresent();

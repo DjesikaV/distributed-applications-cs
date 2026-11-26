@@ -43,7 +43,15 @@
 
         <td th:text="${user.id()}"></td>
 
-        <td th:text="${user.username()}"></td>
+        <td>
+            <span th:text="${user.username()}"></span>
+
+            <a th:href="@{/admin/users/{id}/edit(
+            id=${user.id()},
+            page=${userPage.number},
+            size=${userPage.size}
+    )}">Edit</a>
+        </td>
 
         <td th:text="${user.email()}"></td>
 

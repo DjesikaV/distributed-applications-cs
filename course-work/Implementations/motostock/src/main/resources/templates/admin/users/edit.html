@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit User - MotoStock</title>
+</head>
+<body>
+
+<h1>Edit User</h1>
+
+<form th:action="@{/admin/users/{id}/edit(id=${userId})}"
+      th:object="${editForm}"
+      method="post">
+
+    <input type="hidden" name="page" th:value="${page}">
+    <input type="hidden" name="size" th:value="${size}">
+
+    <p th:each="error : ${#fields.globalErrors()}"
+       th:text="${error}"
+       role="alert"></p>
+
+    <p>
+        <label for="username">Username:</label>
+        <input type="text"
+               id="username"
+               th:field="*{username}"
+               minlength="3"
+               maxlength="50"
+               required>
+        <span th:errors="*{username}"></span>
+    </p>
+
+    <p>
+        <label for="email">Email:</label>
+        <input type="email"
+               id="email"
+               th:field="*{email}"
+               maxlength="120"
+               required>
+        <span th:errors="*{email}"></span>
+    </p>
+
+    <button type="submit">Save changes</button>
+    <a th:href="@{/admin/users(page=${page},size=${size})}">Cancel</a>
+
+</form>
+</body>
+</html>
