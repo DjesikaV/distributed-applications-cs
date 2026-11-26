@@ -133,4 +133,33 @@ public class AdminUserController {
 
         return "redirect:/admin/users";
     }
+
+    @PostMapping("/{id}/enabled")
+    public String setEnabled(
+            @PathVariable Long id,
+            @RequestParam boolean enabled,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            RedirectAttributes redirectAttributes) {
+
+        try {
+            var user = userService.setEnabled(id, enabled);
+            String status = user.isEnabled() ? "enabled" : "disabled";
+
+            redirectAttributes.addFlashAttribute(
+                    "successMessage",
+                    user.getUsername() + " is now " + status + "."
+            );
+        } catch (EntityNotFoundException ex) {
+            redirectAttributes.addFlashAttribute(
+                    "errorMessage",
+                    "This account no longer exists."
+            );
+        }
+
+        redirectAttributes.addAttribute("page", page);
+        redirectAttributes.addAttribute("size", size);
+
+        return "redirect:/admin/users";
+    }
 }

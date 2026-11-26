@@ -131,16 +131,6 @@ public class UserService {
 
     @Transactional
     @PreAuthorize("hasRole('ADMIN')")
-    public User setEnabled(Long id, boolean enabled) {
-        User user = findById(id);
-
-        user.setEnabled(enabled);
-
-        return userRepository.save(user);
-    }
-
-    @Transactional
-    @PreAuthorize("hasRole('ADMIN')")
     public void resetPasswordByAdmin(Long id, AdminResetPasswordForm form) {
 
         String newPassword = form.getNewPassword();
@@ -187,34 +177,44 @@ public class UserService {
 
     @Transactional
     @PreAuthorize("hasRole('ADMIN')")
-    public User changeRole(Long id, Role role){
+    public User changeRole(Long id, Role role) {
         if (role == null) {
             throw new IllegalArgumentException("Role is required");
         }
-        String actorName =  SecurityContextHolder.getContext()
+
+        User target = lockTargetForAdminChange(id, role != Role.ADMIN);
+        target.setRole(role);
+        return target;
+    }
+
+    @Transactional
+    @PreAuthorize("hasRole('ADMIN')")
+    public User setEnabled(Long id, boolean enabled) {
+        User target = lockTargetForAdminChange(id, !enabled);
+        target.setEnabled(enabled);
+        return target;
+    }
+
+    private User lockTargetForAdminChange(Long id, boolean removesAccess) {
+        String actorName = SecurityContextHolder.getContext()
                 .getAuthentication()
                 .getName();
-        var accounts = userRepository.findFOrRoleChange(actorName, id);
+
+        var accounts = userRepository.findForAdminChange(actorName, id);
 
         User actor = accounts.stream()
                 .filter(account -> account.getUsername().equals(actorName))
+                .filter(account -> account.isEnabled() && account.getRole() == Role.ADMIN)
                 .findFirst()
                 .orElseThrow(() -> new AccessDeniedException("Administrator required."));
 
-        if (!actor.isEnabled() || actor.getRole() != Role.ADMIN) {
-            throw new AccessDeniedException("Administrator required.");
+        if (removesAccess && actor.getId().equals(id)) {
+            throw new AccessDeniedException("You cannot remove your own administrator access.");
         }
 
-        User target = accounts.stream()
+        return accounts.stream()
                 .filter(account -> account.getId().equals(id))
                 .findFirst()
                 .orElseThrow(() -> new EntityNotFoundException("User no longer exists."));
-
-        if (actor.getId().equals(id) && role != Role.ADMIN) {
-            throw new AccessDeniedException("You cannot demote your own account.");
-        }
-
-        target.setRole(role);
-        return target;
     }
 }

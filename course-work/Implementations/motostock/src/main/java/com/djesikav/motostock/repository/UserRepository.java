@@ -19,7 +19,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
             where u.username = :actor or u.id = :target
             order by u.id
             """)
-    List<User> findFOrRoleChange(
+    List<User> findForAdminChange(
             @Param("actor") String actor,
             @Param("target") Long target
     );
