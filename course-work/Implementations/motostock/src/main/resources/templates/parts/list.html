@@ -4,22 +4,31 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" th:href="@{/css/home.css}">
+    <link rel="stylesheet" th:href="@{/css/catalog.css}">
     <title>Parts - MotoStock</title>
 </head>
 
 <body>
 
-<h1>Motorcycle Parts Inventory</h1>
+<a class="skip-link" href="#catalog">Skip to inventory</a>
 
-<a sec:authorize="hasRole('ADMIN')"
-   th:href="@{/parts/new}">
-    Add Part
-</a>
+<header th:replace="~{index :: siteHeader}"></header>
 
+<main id="catalog" class="catalog container">
+    <div class="catalog-title">
+        <h1>Parts inventory</h1>
 
-<div sec:authorize="isAuthenticated()">
+        <a class="primary-button"
+           sec:authorize="hasRole('ADMIN')"
+           th:href="@{/parts/new}">
+            Add part
+        </a>
+    </div>
 
-    <h3>Search Motorcycle Parts</h3>
+    <div class="catalog-filters" sec:authorize="isAuthenticated()">
+        <h2>Search parts</h2>
 
     <form th:action="@{/parts/search}" method="get">
 
@@ -129,13 +138,19 @@
 </div>
 
 
-<p th:if="${successMessage}"
-   th:text="${successMessage}"></p>
+    <p role="status"
+       th:if="${successMessage}"
+       th:text="${successMessage}"></p>
 
-<p th:if="${errorMessage}"
-   th:text="${errorMessage}"></p>
+    <p role="alert"
+       th:if="${errorMessage}"
+       th:text="${errorMessage}"></p>
 
-<table>
+    <div class="catalog-table"
+         role="region"
+         aria-label="Parts inventory table"
+         tabindex="0">
+        <table>
     <thead>
     <tr>
         <th>ID</th>
@@ -196,10 +211,12 @@
     </tr>
     </tbody>
 </table>
+    </div>
 
 
-<div sec:authorize="isAuthenticated()"
-     th:if="${partPage != null and partPage.totalPages > 0}">
+    <div class="catalog-pager"
+         sec:authorize="isAuthenticated()"
+         th:if="${partPage != null and partPage.totalPages > 0}">
 
     <p>
         Page
@@ -240,6 +257,6 @@
 </p>
 
 <a th:href="@{/}">Back to Home</a>
-
+</main>
 </body>
 </html>

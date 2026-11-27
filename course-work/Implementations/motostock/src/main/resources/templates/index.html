@@ -12,7 +12,7 @@
 
 <a class="skip-link" href="#main">Skip to content</a>
 
-<header class="site-header">
+<header class="site-header" th:fragment="siteHeader">
     <div class="container header-inner">
         <a class="brand" th:href="@{/}" aria-label="MotoStock home">
             <span class="brand-mark" aria-hidden="true"></span>
@@ -32,7 +32,7 @@
                     <circle cx="12" cy="8" r="3.5"/>
                     <path d="M4 21a8 8 0 0 1 16 0"/>
                 </svg>
-                <span th:text="${username}">admin</span>
+                <span sec:authentication="name">admin</span>
             </span>
 
             <form sec:authorize="isAuthenticated()"
