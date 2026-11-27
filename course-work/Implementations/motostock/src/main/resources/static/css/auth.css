@@ -1,0 +1,148 @@
+/* Login and registration pages */
+
+.auth-page {
+    min-height: 100vh;
+    margin: 0;
+    background: var(--black);
+    color: var(--ivory);
+}
+
+.auth-header {
+    display: flex;
+    align-items: center;
+    min-height: 4.25rem;
+    padding: .4rem var(--gutter);
+    background: var(--black);
+    border-bottom: 1px solid var(--line);
+}
+
+.auth-main {
+    display: grid;
+    align-items: center;
+    min-height: calc(100vh - 4.25rem);
+    padding: clamp(2rem, 5vw, 5rem) var(--gutter);
+
+    background-color: var(--black);
+    background-image:
+            linear-gradient(90deg, #0e0d0b 12%, rgb(14 13 11 / 85%) 35%, transparent 75%),
+            url("../images/motostock-hero.webp");
+    background-position: center, 68% center;
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+.auth-card {
+    width: min(100%, 28rem);
+    min-width: 0;
+    padding: clamp(1.4rem, 3vw, 2.5rem);
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-top: 3px solid var(--brass);
+    border-radius: .35rem;
+}
+
+.auth-card h1 {
+    margin: 0 0 1.5rem;
+    color: var(--ivory);
+    font-family: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
+    font-size: clamp(2.1rem, 3.4vw, 3.25rem);
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -.02em;
+}
+
+.auth-card form {
+    display: grid;
+    gap: 1rem;
+}
+
+.auth-card label {
+    display: block;
+    margin-bottom: .35rem;
+    color: var(--ivory);
+    font-weight: 600;
+}
+
+.auth-card input:not([type="hidden"]) {
+    display: block;
+    width: 100%;
+    min-height: 2.85rem;
+    padding: .65rem .85rem;
+    border: 1px solid #786e5c;
+    border-radius: .2rem;
+    background: var(--black);
+    color: var(--ivory);
+    font: inherit;
+}
+
+.auth-card input:focus-visible {
+    outline: 2px solid var(--brass);
+    outline-offset: 2px;
+}
+
+.auth-card button[type="submit"] {
+    width: 100%;
+    min-height: 2.9rem;
+    margin-top: .3rem;
+    padding: .65rem 1rem;
+    border: 0;
+    border-radius: .2rem;
+    background: var(--brass);
+    color: var(--black);
+    font: inherit;
+    font-weight: 750;
+    cursor: pointer;
+}
+
+.auth-card button[type="submit"]:hover {
+    background: #edcd89;
+}
+
+.auth-card > p {
+    margin: 1.2rem 0 .7rem;
+    color: var(--muted);
+}
+
+.auth-card a {
+    color: var(--brass);
+    text-decoration: underline;
+    text-underline-offset: .2em;
+}
+
+.auth-card a:hover {
+    color: var(--ivory);
+}
+
+/* Registration success, logout confirmation, and login errors */
+
+.auth-card > p[role="status"],
+.auth-card > p[role="alert"] {
+    margin: 0 0 1.1rem;
+    padding: .7rem .85rem;
+    border-left: 3px solid var(--brass);
+    background: #28231a;
+    color: var(--ivory);
+}
+
+.auth-card > p[role="alert"] {
+    border-left-color: #ef9a86;
+    background: #30211e;
+    color: #ffd4c9;
+}
+
+/* Field errors and the duplicate-account message on Register */
+
+.auth-card form > div > p {
+    margin: .4rem 0 0;
+    color: #ffb8a6;
+    font-size: .92rem;
+}
+
+@media (max-width: 45rem) {
+    .auth-main {
+        align-items: start;
+        justify-items: center;
+        padding-block: 2rem;
+        background-image: none;
+    }
+}

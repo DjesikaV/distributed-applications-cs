@@ -4,41 +4,100 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
-    <title>MotoStock</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>MotoStock | Motorcycle parts inventory</title>
+    <link rel="stylesheet" th:href="@{/css/home.css}">
 </head>
 <body>
-    <h1>Welcome to MotoStock</h1>
 
-    <div sec:authorize="isAnonymous()">
-        <a th:href="@{/login}">Login</a>
-        <a th:href="@{/register}">Register</a>
-    </div>
+<a class="skip-link" href="#main">Skip to content</a>
 
-    <div sec:authorize="isAuthenticated()">
-        <form th:action="@{/logout}" method="post">
-            <button type="submit">Logout</button>
-        </form>
-    </div>
-
-    <p>
-        <a th:href="@{/parts}">Parts</a>
-        <a th:href="@{/categories}">Categories</a>
-        <a th:href="@{/suppliers}">Suppliers</a>
-    </p>
-
-    <div sec:authorize="hasRole('ADMIN')">
-        <a th:href="@{/admin/users}">
-            Manage Users
+<header class="site-header">
+    <div class="container header-inner">
+        <a class="brand" th:href="@{/}" aria-label="MotoStock home">
+            <span class="brand-mark" aria-hidden="true"></span>
+            MotoStock
         </a>
+
+        <nav class="account-nav" aria-label="Account">
+            <a sec:authorize="isAnonymous()" th:href="@{/login}">Login</a>
+            <a sec:authorize="isAnonymous()" th:href="@{/register}">Register</a>
+
+            <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin/users}">
+                Manage users
+            </a>
+
+            <span class="identity" sec:authorize="isAuthenticated()">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <circle cx="12" cy="8" r="3.5"/>
+                    <path d="M4 21a8 8 0 0 1 16 0"/>
+                </svg>
+                <span th:text="${username}">admin</span>
+            </span>
+
+            <form sec:authorize="isAuthenticated()"
+                  th:action="@{/logout}" method="post">
+                <button type="submit">Log out</button>
+            </form>
+        </nav>
     </div>
+</header>
 
-    <p>
-        Current user:
-        <strong th:text="${username}">Guest</strong>
-    </p>
+<main id="main">
+    <section class="hero" aria-labelledby="hero-title">
+        <div class="container hero-content">
+            <h1 id="hero-title">Motorcycle parts<br>inventory</h1>
+            <p>Find parts, browse categories, and look up suppliers.</p>
 
-    <p>
-        Motorcycle Parts Inventory Management System
-    </p>
+            <a class="primary-button" th:href="@{/parts}">
+                Browse parts <span aria-hidden="true">→</span>
+            </a>
+        </div>
+    </section>
+
+    <section class="container directory" aria-labelledby="directory-title">
+        <h2 id="directory-title">Workshop directory</h2>
+
+        <div class="directory-grid">
+            <a class="directory-link" th:href="@{/parts}">
+                <svg class="directory-icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <circle cx="12" cy="12" r="9"/>
+                    <circle cx="12" cy="12" r="3"/>
+                    <path d="m12 5 1.5 1.5m4 2.5-.5 2m-.5 5-2 .5M10 18l-1.5-1.5M6 13l.5-2m1-3 2-.5"/>
+                </svg>
+                <span>
+                    <strong>Parts</strong>
+                    <small>Browse the parts catalog.</small>
+                </span>
+                <span class="arrow" aria-hidden="true">→</span>
+            </a>
+
+            <a class="directory-link" th:href="@{/categories}">
+                <svg class="directory-icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="m2 8 10-5 10 5-10 5-10-5Zm0 5 10 5 10-5M2 18l10 5 10-5"/>
+                </svg>
+                <span>
+                    <strong>Categories</strong>
+                    <small>Find parts by category.</small>
+                </span>
+                <span class="arrow" aria-hidden="true">→</span>
+            </a>
+
+            <a class="directory-link" th:href="@{/suppliers}">
+                <svg class="directory-icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M2 5h13v13H8m-4 0H2V5Zm13 5h4l3 4v4h-2m-5 0h1"/>
+                    <circle cx="6" cy="18" r="2"/>
+                    <circle cx="18" cy="18" r="2"/>
+                </svg>
+                <span>
+                    <strong>Suppliers</strong>
+                    <small>Look up supplier details.</small>
+                </span>
+                <span class="arrow" aria-hidden="true">→</span>
+            </a>
+        </div>
+    </section>
+</main>
+
 </body>
 </html>

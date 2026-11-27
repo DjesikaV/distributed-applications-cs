@@ -1,0 +1,287 @@
+:root {
+    color-scheme: dark;
+    --black: #0e0d0b;
+    --panel: #171512;
+    --ivory: #f6f0e4;
+    --muted: #d0c7b6;
+    --brass: #dbb76e;
+    --line: #514a3d;
+    --gutter: clamp(1.15rem, 3.6vw, 4rem);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background: var(--panel);
+    color: var(--ivory);
+    font: 1rem/1.5 "Segoe UI", Arial, sans-serif;
+}
+
+h1, h2, p, form {
+    margin: 0;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+:focus-visible {
+    outline: 3px solid #ffe4a4;
+    outline-offset: 4px;
+}
+
+.container {
+    width: min(calc(100% - 2 * var(--gutter)), 96rem);
+    margin-inline: auto;
+}
+
+.skip-link {
+    position: absolute;
+    top: -5rem;
+    left: 1rem;
+    z-index: 2;
+    padding: .6rem 1rem;
+    background: var(--ivory);
+    color: var(--black);
+}
+
+.skip-link:focus {
+    top: .5rem;
+}
+
+/* Header */
+
+.site-header {
+    background: var(--black);
+    border-bottom: 1px solid var(--line);
+}
+
+.header-inner,
+.brand,
+.account-nav,
+.identity,
+.primary-button {
+    display: flex;
+    align-items: center;
+}
+
+.header-inner {
+    min-height: 4.25rem;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: .25rem 1.5rem;
+    padding-block: .4rem;
+}
+
+.brand {
+    gap: .55rem;
+    font-size: clamp(1.55rem, 2.3vw, 2.4rem);
+    font-weight: 800;
+    letter-spacing: -.045em;
+}
+
+.brand-mark {
+    width: 1.55em;
+    height: .85em;
+    background: var(--brass);
+    clip-path: polygon(
+            0 100%, 45% 0, 56% 0, 49% 55%, 84% 0, 100% 0,
+            82% 100%, 66% 100%, 73% 52%, 42% 100%, 32% 100%,
+            37% 55%, 17% 100%
+    );
+}
+
+.account-nav {
+    flex-wrap: wrap;
+    gap: .1rem clamp(.85rem, 2vw, 2rem);
+}
+
+.account-nav a,
+.account-nav button {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+}
+
+.account-nav button {
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+}
+
+.account-nav a:hover,
+.account-nav button:hover {
+    color: var(--brass);
+}
+
+.identity {
+    gap: .45rem;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+}
+
+.identity svg,
+.directory-icon {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    color: var(--brass);
+}
+
+.identity svg {
+    width: 1.2rem;
+    height: 1.2rem;
+    flex: none;
+}
+
+/* Motorcycle banner */
+
+.hero {
+    min-height: clamp(27rem, 44vw, 43rem);
+    border-bottom: 1px solid var(--line);
+    background-color: var(--black);
+    background-image:
+            linear-gradient(90deg, rgb(12 11 9 / 78%), transparent 68%),
+            url("../images/motostock-hero.webp");
+    background-position: center;
+    background-size: cover;
+}
+
+.hero-content {
+    padding-block: clamp(3rem, 5.7vw, 6.5rem);
+}
+
+.hero h1 {
+    font-family: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
+    font-size: clamp(3rem, 6.8vw, 6.8rem);
+    font-weight: 900;
+    line-height: .98;
+    letter-spacing: -.025em;
+}
+
+.hero p {
+    max-width: 35rem;
+    margin-block: 1.25rem 1.7rem;
+    font-size: clamp(1rem, 1.45vw, 1.45rem);
+}
+
+.primary-button {
+    width: fit-content;
+    gap: 1.1rem;
+    padding: .75rem 1.3rem;
+    border-radius: .22rem;
+    background: var(--brass);
+    color: var(--black);
+    font-size: clamp(1rem, 1.45vw, 1.35rem);
+    font-weight: 750;
+}
+
+.primary-button:hover {
+    background: #edcd89;
+}
+
+/* Workshop directory */
+
+.directory {
+    padding-block: 1.15rem 2rem;
+}
+
+.directory h2 {
+    margin-bottom: .85rem;
+    font-size: clamp(1.55rem, 2.3vw, 2.3rem);
+}
+
+.directory-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    padding-block: .9rem;
+    border-block: 1px solid var(--line);
+}
+
+.directory-link {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: clamp(.65rem, 1.5vw, 1.5rem);
+    padding: 1.2rem clamp(.75rem, 1.6vw, 1.5rem);
+}
+
+.directory-link + .directory-link {
+    border-left: 1px solid var(--line);
+}
+
+.directory-link:hover,
+.directory-link:focus-visible {
+    background: #231f19;
+}
+
+.directory-icon {
+    width: clamp(2rem, 3.6vw, 3.75rem);
+    height: auto;
+}
+
+.directory-link strong {
+    display: block;
+    font-size: clamp(1.25rem, 2vw, 1.9rem);
+}
+
+.directory-link small {
+    display: block;
+    color: var(--muted);
+    font-size: 1rem;
+}
+
+.arrow {
+    color: var(--brass);
+    font-size: 1.65rem;
+}
+
+/* Phone and tablet layout */
+
+@media (max-width: 50rem) {
+    .header-inner {
+        padding-block: .65rem;
+    }
+
+    .hero {
+        min-height: 0;
+        background-image: none;
+    }
+
+    .hero-content {
+        padding-block: 2rem .5rem;
+    }
+
+    .hero::after {
+        content: "";
+        display: block;
+        height: clamp(11rem, 48vw, 21rem);
+        background:
+                linear-gradient(var(--black), transparent 28%),
+                url("../images/motostock-hero.webp") 85% center / cover;
+    }
+
+    .directory-grid {
+        grid-template-columns: 1fr;
+        padding-block: 0;
+    }
+
+    .directory-link {
+        min-height: 5.2rem;
+        padding-inline: .5rem;
+    }
+
+    .directory-link + .directory-link {
+        border-left: 0;
+        border-top: 1px solid var(--line);
+    }
+}
