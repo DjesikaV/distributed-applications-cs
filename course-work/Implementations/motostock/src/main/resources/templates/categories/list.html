@@ -4,193 +4,186 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" th:href="@{/css/home.css}">
+    <link rel="stylesheet" th:href="@{/css/catalog.css}">
     <title>Categories - MotoStock</title>
 </head>
 <body>
-<h1>Motorcycle Parts Categories</h1>
 
-<p th:if="${successMessage}"
-   th:text="${successMessage}"></p>
+<a class="skip-link" href="#catalog">Skip to categories</a>
+<header th:replace="~{index :: siteHeader}"></header>
 
-<p th:if="${errorMessage}"
-   th:text="${errorMessage}"></p>
+<main id="catalog" class="catalog container">
+    <div class="catalog-title">
+        <h1>Categories</h1>
 
-<a sec:authorize="hasRole('ADMIN')"
-   th:href="@{/categories/new}">
-    Add Category
-</a>
+        <a class="primary-button"
+           sec:authorize="hasRole('ADMIN')"
+           th:href="@{/categories/new}">
+            Add category
+        </a>
+    </div>
 
+    <p role="status"
+       th:if="${successMessage}"
+       th:text="${successMessage}"></p>
 
-<div sec:authorize="isAuthenticated()">
+    <p role="alert"
+       th:if="${errorMessage}"
+       th:text="${errorMessage}"></p>
 
-    <h3>Search Categories</h3>
+    <div class="catalog-filters" sec:authorize="isAuthenticated()">
+        <h2>Search categories</h2>
 
-    <form th:action="@{/categories/search}" method="get">
+        <form th:action="@{/categories/search}" method="get">
+            <div>
+                <label for="name">Category Name:</label>
+                <input type="text"
+                       id="name"
+                       name="name"
+                       th:value="${name}"
+                       placeholder="Search by name..."
+                       maxlength="80">
+            </div>
 
-        <div>
-            <label for="name">Category Name:</label>
-            <input type="text"
-                   id="name"
-                   name="name"
-                   th:value="${name}"
-                   placeholder="Search by name..."
-                   maxlength="80">
-        </div>
+            <div>
+                <label for="active">Active Status:</label>
+                <select id="active" name="active">
+                    <option value="all" th:selected="${active == null or active == 'all'}">
+                        All
+                    </option>
+                    <option value="true" th:selected="${active == 'true'}">
+                        Active
+                    </option>
+                    <option value="false" th:selected="${active == 'false'}">
+                        Inactive
+                    </option>
+                </select>
+            </div>
 
-        <div>
-            <label for="active">Active Status:</label>
-            <select id="active" name="active">
-                <option value="all"
-                        th:selected="${active == null or active == 'all'}">
-                    All
-                </option>
-                <option value="true"
-                        th:selected="${active == 'true'}">
-                    Active
-                </option>
-                <option value="false"
-                        th:selected="${active == 'false'}">
-                    Inactive
-                </option>
-            </select>
-        </div>
+            <div>
+                <label for="sort">Sort By:</label>
+                <select id="sort" name="sort">
+                    <option value="name" th:selected="${sort == null or sort == 'name'}">
+                        Name
+                    </option>
+                    <option value="displayOrder" th:selected="${sort == 'displayOrder'}">
+                        Display Order
+                    </option>
+                    <option value="active" th:selected="${sort == 'active'}">
+                        Active Status
+                    </option>
+                    <option value="createdAt" th:selected="${sort == 'createdAt'}">
+                        Creation Date
+                    </option>
+                </select>
+            </div>
 
-        <div>
-            <label for="sort">Sort By:</label>
-            <select id="sort" name="sort">
-                <option value="name"
-                        th:selected="${sort == null or sort == 'name'}">
-                    Name
-                </option>
-                <option value="displayOrder"
-                        th:selected="${sort == 'displayOrder'}">
-                    Display Order
-                </option>
-                <option value="active"
-                        th:selected="${sort == 'active'}">
-                    Active Status
-                </option>
-                <option value="createdAt"
-                        th:selected="${sort == 'createdAt'}">
-                    Creation Date
-                </option>
-            </select>
-        </div>
+            <div>
+                <label for="direction">Direction:</label>
+                <select id="direction" name="direction">
+                    <option value="asc" th:selected="${direction == null or direction == 'asc'}">
+                        Ascending
+                    </option>
+                    <option value="desc" th:selected="${direction == 'desc'}">
+                        Descending
+                    </option>
+                </select>
+            </div>
 
-        <div>
-            <label for="direction">Direction:</label>
-            <select id="direction" name="direction">
-                <option value="asc"
-                        th:selected="${direction == null or direction == 'asc'}">
-                    Ascending
-                </option>
-                <option value="desc"
-                        th:selected="${direction == 'desc'}">
-                    Descending
-                </option>
-            </select>
-        </div>
+            <div>
+                <label for="size">Records per page:</label>
+                <select id="size" name="size">
+                    <option value="5" th:selected="${size == 5}">5</option>
+                    <option value="10" th:selected="${size == null or size == 10}">10</option>
+                    <option value="20" th:selected="${size == 20}">20</option>
+                    <option value="50" th:selected="${size == 50}">50</option>
+                </select>
+            </div>
 
-        <div>
-            <label for="size">Records per page:</label>
-            <select id="size" name="size">
-                <option value="5" th:selected="${size == 5}">5</option>
-                <option value="10"
-                        th:selected="${size == null or size == 10}">10</option>
-                <option value="20" th:selected="${size == 20}">20</option>
-                <option value="50" th:selected="${size == 50}">50</option>
-            </select>
-        </div>
+            <input type="hidden" name="page" value="0">
 
-        <input type="hidden" name="page" value="0">
+            <button type="submit">Search</button>
+            <a th:href="@{/categories/search}">Reset</a>
+        </form>
+    </div>
 
-        <button type="submit">Search</button>
-        <a th:href="@{/categories/search}">Reset</a>
+    <div class="catalog-table catalog-table--compact"
+         role="region"
+         aria-label="Categories table"
+         tabindex="0">
+        <table>
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Display order</th>
+                <th>Active</th>
+                <th sec:authorize="hasRole('ADMIN')">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="category : ${categories}">
+                <td th:text="${category.id}"></td>
+                <td th:text="${category.name}"></td>
+                <td th:text="${category.description}"></td>
+                <td th:text="${category.displayOrder}"></td>
+                <td th:text="${category.active}"></td>
 
-    </form>
+                <td sec:authorize="hasRole('ADMIN')">
+                    <a th:href="@{/categories/{id}/edit(id=${category.id})}">Edit</a>
 
-</div>
+                    <form th:action="@{/categories/{id}/delete(id=${category.id})}"
+                          method="post"
+                          style="display: inline"
+                          onsubmit="return confirm('Are you sure you want to delete this category?');">
+                        <button type="submit">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
 
-<table>
-    <thead>
-    <tr>
-        <th>ID</th>
-        <th>Name</th>
-        <th>Description</th>
-        <th>Display order</th>
-        <th>Active</th>
-        <th sec:authorize="hasRole('ADMIN')">Actions</th>
-    </tr>
-    </thead>
+    <div class="catalog-pager"
+         sec:authorize="isAuthenticated()"
+         th:if="${categoryPage != null and categoryPage.totalPages > 0}">
+        <p>
+            Page <span th:text="${categoryPage.number + 1}"></span>
+            of <span th:text="${categoryPage.totalPages}"></span>
+        </p>
 
-    <tbody>
-    <tr th:each="category : ${categories}">
+        <a th:if="${categoryPage.hasPrevious()}"
+           th:href="@{/categories/search(
+               name=${name},
+               active=${active},
+               sort=${sort},
+               direction=${direction},
+               size=${size},
+               page=${categoryPage.number - 1}
+           )}">
+            Previous
+        </a>
 
-        <td th:text="${category.id}"></td>
-        <td th:text="${category.name}"></td>
-        <td th:text="${category.description}"></td>
-        <td th:text="${category.displayOrder}"></td>
-        <td th:text="${category.active}"></td>
+        <a th:if="${categoryPage.hasNext()}"
+           th:href="@{/categories/search(
+               name=${name},
+               active=${active},
+               sort=${sort},
+               direction=${direction},
+               size=${size},
+               page=${categoryPage.number + 1}
+           )}">
+            Next
+        </a>
+    </div>
 
-        <td sec:authorize="hasRole('ADMIN')">
+    <p th:if="${categories.isEmpty()}">No categories found.</p>
 
-            <a th:href="@{/categories/{id}/edit(id=${category.id})}">
-                Edit
-            </a>
-
-            <form th:action="@{/categories/{id}/delete(id=${category.id})}"
-                  method="post"
-                  style="display:inline"
-                  onsubmit="return confirm('Are you sure you want to delete this category?');">
-
-                <button type="submit">Delete</button>
-            </form>
-
-        </td>
-    </tr>
-    </tbody>
-</table>
-
-
-<div sec:authorize="isAuthenticated()"
-     th:if="${categoryPage != null and categoryPage.totalPages > 0}">
-
-    <p>
-        Page
-        <span th:text="${categoryPage.number + 1}"></span>
-        of
-        <span th:text="${categoryPage.totalPages}"></span>
-    </p>
-
-    <a th:if="${categoryPage.hasPrevious()}"
-       th:href="@{/categories/search(
-           name=${name},
-           active=${active},
-           sort=${sort},
-           direction=${direction},
-           size=${size},
-           page=${categoryPage.number - 1}
-       )}">
-        Previous
-    </a>
-
-    <a th:if="${categoryPage.hasNext()}"
-       th:href="@{/categories/search(
-           name=${name},
-           active=${active},
-           sort=${sort},
-           direction=${direction},
-           size=${size},
-           page=${categoryPage.number + 1}
-       )}">
-        Next
-    </a>
-
-</div>
-
-<p th:if="${categories.isEmpty()}">
-    No categories found.
-</p>
+    <a th:href="@{/}">Back to Home</a>
+</main>
 
 </body>
 </html>
